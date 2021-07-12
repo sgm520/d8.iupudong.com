@@ -25,7 +25,6 @@ class PublicController extends AdminBaseController
      */
     public function login()
     {
-//        halt(        cmf_password('admin8888'));
         $loginAllowed = session("__LOGIN_BY_CMF_ADMIN_PW__");
         if (empty($loginAllowed)) {
             //$this->error('非法登录!', cmf_get_root() . '/');

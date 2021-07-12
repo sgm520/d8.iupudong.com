@@ -382,13 +382,27 @@ class IndexController extends HomeBaseController
     public function category_product()
     {
         $cid = $this->request->param("cid");
-        $data_ChaoshiCategory = ChaoshiCategoryModel::where('state', 1)->where('id',$cid)->order("list_order", "asc")->select()->toArray();
-        foreach ($data_ChaoshiCategory as $k => $v) {
-            $data_ChaoshiCategory[$k]['children'] = ChaoshiModel::where('status', 1)->where('category', $v['id'])->field('*,FROM_UNIXTIME(update_time,"%Y-%m-%d %H:%i:%s") update_time_text')->order("list_order", "asc")->select()->toArray();
+        if (empty($cid)) {
+            echo json_encode(["code" => 0, "msg" => "参数不能为空"], JSON_UNESCAPED_UNICODE);
+            die;
         }
-        echo '<pre>';print_r($data_ChaoshiCategory);die;
-        echo json_encode(["code" => 200, "data" => $data_ChaoshiCategory], JSON_UNESCAPED_UNICODE);
+        $data = ChaoshiModel::where('status', 1)->where('category', $cid)->order("list_order", "asc")->field('*,FROM_UNIXTIME(update_time,"%Y-%m-%d %H:%i:%s") update_time_text')->select()->toArray();//热门排行
+        foreach ($data as $k => $v) {
+            $category              = ChaoshiCategoryModel::where(['id' => $v['category']])->field('id cate,name cate_name,logo cate_logo')->find()->toArray();
+            $data[$k]['cate']      = $category['cate'];
+            $data[$k]['cate_name'] = $category['cate_name'];
+            $data[$k]['cate_logo'] = $category['cate_logo'];
+        }
+        echo json_encode(["code" => 200, "data" => $data], JSON_UNESCAPED_UNICODE);
         die;
+
+        // $cid = $this->request->param("cid");
+        // $data_ChaoshiCategory = ChaoshiCategoryModel::where('state', 1)->where('id',$cid)->order("list_order", "asc")->select()->toArray();
+        // foreach ($data_ChaoshiCategory as $k => $v) {
+        //     $data_ChaoshiCategory[$k]['children'] = ChaoshiModel::where('status', 1)->where('category', $v['id'])->field('*,FROM_UNIXTIME(update_time,"%Y-%m-%d %H:%i:%s") update_time_text')->order("list_order", "asc")->select()->toArray();
+        // }
+        // echo json_encode(["code" => 200, "data" => $data_ChaoshiCategory], JSON_UNESCAPED_UNICODE);
+        // die;
     }
 
 

@@ -8,7 +8,10 @@ use think\facade\Db;
 class FanyongOrderController extends AdminBaseController{
 
     public function index(){
-        $order = Db::name("fanyong_order")->order("id","desc")->paginate("10");
+        $order = Db::name("fanyong_order")->order("id","desc")->paginate("10")->each(function($item, $key){
+            $item['tel'] = substr_replace($item['tel'], '****', 3, 4);
+            return $item;
+        });
         // 获取分页显示
         $page = $order->render();
 
@@ -31,14 +34,20 @@ class FanyongOrderController extends AdminBaseController{
     }
 
     public function editPost(){
-        if ($this->request->post()){
-            $data = $this->request->param();
-            if (!empty($data["fmoney"])){
-                $data["status"] = 1;
+        if ($data = $this->request->post()){
+            if (empty($data["xlines"])){
+                $this->error("下款金额不能为空");
             }
-            Db("fanyong_order")->where("id",$data["id"])->update($data);
-            $this->fanyong($data['id']);
-            $this->success("修改成功");
+            if (empty($data["fmoney"])){
+                $this->error("返佣金额不能为空");
+            }
+            $data["status"] = 1;
+            $result = Db("fanyong_order")->where("id",$data["id"])->update($data);
+            if(!empty($result)){
+                $this->fanyong($data['id']);
+                $this->success("操作成功");
+            }
+            $this->error("操作失败，状态已更改");
         }
     }
 
@@ -47,9 +56,7 @@ class FanyongOrderController extends AdminBaseController{
         $userModel = new UserModel();
         $order = Db("fanyong_order")->where("id",$id)->field("pid,name,p_id,tel,xlines,p_title,fmoney")->find();
         $user = $userModel->where("id",$order['pid'])->field("id,income,indirect,s_id")->find();
-
         $remark = $order['p_title'];
-
         /**
          * 申请用户
          */

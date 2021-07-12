@@ -16,10 +16,10 @@ class UserController extends HomeBaseController{
         $this->userId = session("USER_ID");
         // $this->userId = 15;
         $this->user_name = session("USER_NAME");
-        if (empty($this->userId)) {
-            echo json_encode(["code"=>"404","state"=>0,"data"=>"请登录账号！"],JSON_UNESCAPED_UNICODE);
-            die;
-        }
+        // if (empty($this->userId)) {
+        //     echo json_encode(["code"=>"404","state"=>0,"data"=>"请登录账号！"],JSON_UNESCAPED_UNICODE);
+        //     die;
+        // }
 
         parent::initialize();
     }
@@ -39,7 +39,7 @@ class UserController extends HomeBaseController{
         echo json_encode(["code"=>200,"data"=>$u_data],JSON_UNESCAPED_UNICODE);die;
 
     }
-    
+
     public function tx_list(){
         $txModel = new TixianModel();
         $list = $txModel->where("user_login",session("USER_NAME"))->select();
@@ -48,16 +48,16 @@ class UserController extends HomeBaseController{
         }
         echo json_encode(["code"=>200,"data"=>$list],JSON_UNESCAPED_UNICODE);die;
     }
-    
-    
+
+
     /**
      * 返佣产品单页详情
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-   public function fanyong_list(){
-         $id = $this->request->param("id");
+    public function fanyogn_list(){
+        $id = $this->request->param("id");
         if(!empty($id)){
             $list = Db("fanyong")->where("id",$id)->find();
             echo json_encode(["code"=>200,"data"=>$list],JSON_UNESCAPED_UNICODE);die;
@@ -75,22 +75,22 @@ class UserController extends HomeBaseController{
     public function tx123(){
         $param = $this->request->param();
         $user = new UserModel();
-        
+
         $u_data = $user
             ->where("id",$this->userId)
             ->field("id_card,al_pay_name,al_pay_account")
             ->find();
         if(!empty($param['al_pay_name']) && !empty($param['al_pay_account'])){
-           $us = UserModel::find($this->userId);
-           
-           $rq_us = $us->allowfield(['al_pay_account','al_pay_name','id_card'])->save($param);
-           if($rq_us){
-               echo json_encode(['code'=>200,"data"=>"绑定成功"],JSON_UNESCAPED_UNICODE);
-           }else{
-               echo json_encode(['code'=>41,"data"=>"绑定失败"],JSON_UNESCAPED_UNICODE);
-           }
+            $us = UserModel::find($this->userId);
+
+            $rq_us = $us->allowfield(['al_pay_account','al_pay_name','id_card'])->save($param);
+            if($rq_us){
+                echo json_encode(['code'=>200,"data"=>"绑定成功"],JSON_UNESCAPED_UNICODE);
+            }else{
+                echo json_encode(['code'=>41,"data"=>"绑定失败"],JSON_UNESCAPED_UNICODE);
+            }
             // Db("user")->where("id",$this->userId)->allowfield(['al_pay_account','al_pay_name','id_card'])->update($param);
-            
+
             die;
         }else{
             if(empty($param['money'])){
@@ -110,7 +110,7 @@ class UserController extends HomeBaseController{
         }
 
     }
-    
+
     public function tx(){
 
         if($this->request->isPost()){
@@ -146,7 +146,7 @@ class UserController extends HomeBaseController{
             echo json_encode(['code'=>200,"data"=>$u_data],JSON_UNESCAPED_UNICODE);die;
         }
     }
-    
+
 
 
     /*
@@ -160,7 +160,7 @@ class UserController extends HomeBaseController{
             ->where("id",$this->userId)
             ->field("id_card,tx,ktx,income,al_pay_name,al_pay_account")
             ->find();
-        
+
         if($uList['ktx']>=$money & $money != 0){
             $ins = [
                 "money"=>$money, //提现金额
@@ -172,7 +172,7 @@ class UserController extends HomeBaseController{
                 "al_pay_account" => $uList["al_pay_account"],
             ];
             $txModel->save($ins);
-            
+
             // echo json_encode(["code"=>200,"data"=>$u_data,"msg"=>"提现成功"],JSON_UNESCAPED_UNICODE);
         }else{
             echo json_encode(["code"=>22,"data"=>$u_data,"msg"=>"可提现金额不足"],JSON_UNESCAPED_UNICODE);die;
@@ -181,6 +181,31 @@ class UserController extends HomeBaseController{
     }
 
 
+    /**
+     * 申请订单  申请产品
+     */
+    public function to_product(){
+        if($this->request->post()){
+            $UserModel = new UserModel();
+            $data = $this->request->param(["name","tel","p_id","p_title"]);
+            $get_data = [
+                "pid" => session("USER_ID"),
+                "status" => 2,
+                "ment" => $UserModel->GetOs(),
+                "time" => time(),
+            ];
+            $in_data = array_merge($data,$get_data);
+            $request = Db::name("fanyong_order")->insert($in_data);
+            if($request){
+                echo json_encode(["code"=>200,"data"=>"申请成功"],JSON_UNESCAPED_UNICODE);die;
+            }else{
+                echo json_encode(["code"=>23,"data"=>"抱歉，未能提交成功，请检查填写。"],JSON_UNESCAPED_UNICODE);die;
+            }
+        }else{
+            echo json_encode(["code"=>24,"data"=>"抱歉，提交方式有误"],JSON_UNESCAPED_UNICODE);die;
+        }
+
+    }
 
 
 
@@ -205,10 +230,15 @@ class UserController extends HomeBaseController{
      * 客户列表-订单记录
      */
     public function order(){
-        $data = $this->request->param(["p_id","status"]);
-        $order = Db::name("fanyong_order")->where($data)->select();
-        echo json_encode(["code"=>200,"data"=>$order],JSON_UNESCAPED_UNICODE);
+        $data = $this->request->param(["p_id","status","pid"]);
+        $data['state'] = $data["p_id"];
+        unset($data["p_id"]);
+        $order = Db::name("fanyong_order")->where($data)->field('*,FROM_UNIXTIME(time,"%Y-%m-%d %H:%i:%s") time_text')->order('time desc')->select()->toArray();
 
+        foreach($order as $k=>$v){
+            $order[$k]['tel'] = substr_replace($v['tel'], '****', 3, 4);
+        }
+        echo json_encode(["code"=>200,"data"=>$order],JSON_UNESCAPED_UNICODE);die;
     }
 
     /**
@@ -233,11 +263,6 @@ class UserController extends HomeBaseController{
         }
         echo json_encode(["code"=>200,"data"=>$user],JSON_UNESCAPED_UNICODE);die;
     }
-
-
-
-
-
 
 
 }

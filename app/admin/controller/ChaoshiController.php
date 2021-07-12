@@ -78,11 +78,9 @@ class ChaoshiController extends AdminBaseController
         }
         $date['status'] = 1;
         $date['list_order'] = 1000;
-        $date['sort'] = 1000;
         $data["remarks"] = json_encode($data["remarks"], JSON_UNESCAPED_UNICODE);
 
         $data["update_time"] = $data['create_time'] = time();
-
         $chaoshiModel->save($data);
 
         $this->success("添加成功！", url("chaoshi/index"));
@@ -153,12 +151,12 @@ class ChaoshiController extends AdminBaseController
         return $this->fetch();
     }
 
-    public function category_addPost(){
+  public function category_addPost(){
         if ($this->request->isPost()) {
             $data      = $this->request->param();
             $data['state'] = 1;
             $data['list_order'] = 1000;
-            $data['time'] = date("Y-m-d H:i:s",time());
+            $data['time'] = time();
             $ins = Db("chaoshi_category")->insert($data);
 
             if($ins){
@@ -189,6 +187,13 @@ class ChaoshiController extends AdminBaseController
 
             $this->success("保存成功！", url("Chaoshi/category"));
         }
+    }
+
+    public function category_delete(){
+        $id = $this->request->param('id', 0, 'intval');
+        ChaoshiCategoryModel::destroy($id);
+        $this->success("删除成功！", url("Chaoshi/category"));
+    
     }
 
 
