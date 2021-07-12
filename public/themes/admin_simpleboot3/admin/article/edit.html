@@ -1,0 +1,88 @@
+<include file="public@header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('article/index')}">所有文章</a></li>
+        <li><a href="{:url('article/add')}">添加文章</a></li>
+        <li class="active"><a>编辑文章</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form margin-top-20" action="{:url('article/editPost')}">
+        <div class="form-group">
+            <label for="input-name" class="col-sm-1 control-label">名称<span class="form-required">*</span></label>
+            <div class="col-md-6 col-sm-10">
+                <input type="text" class="form-control" id="input-name" name="title" value="{$article.title}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-category" class="col-sm-1 control-label">文章分类</label>
+            <div class="col-md-6 col-sm-10">
+                <select class="form-control" name="category" id="input-category">
+                        <option value="{$article.category}">{:article_category($article.category)}</option>
+                    <foreach name="category" item="vo">
+                        <if condition="$article.category !== $vo.id">
+                        <option value="{$vo.id}">{$vo.name}</option>
+                        </if>
+                    </foreach>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-create_time" class="col-sm-1 control-label">发布时间</label>
+            <div class="col-md-6 col-sm-10">
+                <input type="datetime" class="form-control" id="input-create_time" name="create_time" value="{$article.create_time}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-update_time" class="col-sm-1 control-label">更新时间</label>
+            <div class="col-md-6 col-sm-10">
+                <input type="datetime" class="form-control" id="input-update_time" name="update_time" value="{$article.update_time}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="thumb" class="col-sm-1 control-label">缩略图</label>
+            <div class="col-md-6 col-sm-10">
+
+                <input type="hidden" class="form-control" id="thumb" name="picture" value="{$article.picture}">
+                <a href="javascript:uploadOneImage('图片上传','#thumb');">
+                    <if condition="empty($article['picture'])">
+                        <img src="__TMPL__/public/assets/images/default-thumbnail.png"
+                             id="thumb-preview" width="135" style="cursor: hand"/>
+                        <else/>
+                        <img src="{:cmf_get_image_preview_url($article['picture'])}" id="thumb-preview"
+                             width="135" style="cursor: hand"/>
+                    </if>
+                </a>
+                <input type="button" class="btn btn-small" onclick="$('#thumb-preview').attr('src','__TMPL__/Public/assets/images/default-thumbnail.png');$('#input-image').val('');return false;" value="取消图片">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="container" class="col-sm-1 control-label">文章内容<span class="form-required">*</span></label>
+            <div class="col-md-9 col-sm-10">
+                <script type="text/plain" id="container" name="content">{$article.content}</script>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="hidden"  name="id" value="{$article.id}">
+                <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('EDIT')}</button>
+                <a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+
+    Wind.css('ueditor',function(){
+        var ue = UE.getEditor('container');
+    });
+</script>
+</body>
+</html>

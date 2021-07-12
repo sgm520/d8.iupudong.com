@@ -1,0 +1,78 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>返佣明细</a></li>
+    </ul>
+
+    <form class="well form-search" method="post" action="{:url('AdminPost/index')}">
+
+        受益人ID：
+        <input type="text" name="keyword" style="width: 200px;" value="{$formget.keyword|default=''}" placeholder="请输入收益人ID">
+        客户姓名：
+        <input type="text" name="keyword" style="width: 200px;" value="{$formget.keyword|default=''}" placeholder="请输入客户姓名">
+        申请手机号：
+        <input type="text" name="keyword" style="width: 200px;" value="{$formget.keyword|default=''}" placeholder="请输入申请手机号">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp; &nbsp;
+        关键字：
+        <input type="text" name="keyword" style="width: 200px;" value="{$formget.keyword|default=''}" placeholder="请输入关键字...">
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:url('AdminPost/index')}">清空</a>
+    </form>
+    <form method="post" class="js-ajax-form margin-top-20" action="{:url('fanyong/listOrder')}">
+        <php>$status=array("1"=>lang('DISPLAY'),"0"=>lang('HIDDEN'));</php>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="50">ID</th>
+                <th width="80">代理ID</th>
+                <th width="80">代理手机</th>
+                <th width="80">客户姓名</th>
+                <th width="80">客户手机号</th>
+                <th width="80">交易金额</th>
+                <th width="135">返佣金额</th>
+                <th width="135">产品名称</th>
+                <th width="135">返佣类型</th>
+                <th width="100">返佣时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="detail" item="vo">
+                <tr>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.user_id}</td>
+                    <td>{$vo.tel}</td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.k_tel}</td>
+                    <td>{$vo.change}</td>
+                    <td>{$vo.balance}</td>
+                    <td>{$vo.remark}</td>
+                    <td>{$vo.description}</td>
+                    <td>{:date("Y-m-d H:i:s",$vo.create_time)}</td>
+                </tr>
+            </foreach>
+            </tbody>
+            <tfoot>
+            <tr>
+                <th width="50">ID</th>
+                <th>代理ID</th>
+                <th width="80">代理手机</th>
+                <th width="80">客户姓名</th>
+                <th width="80">客户手机号</th>
+                <th width="80">交易金额</th>
+                <th width="135">返佣金额</th>
+                <th width="135">产品名称</th>
+                <th width="135">返佣类型</th>
+                <th width="100">返佣时间</th>
+            </tr>
+            </tfoot>
+        </table>
+    </form>
+		<div class="pagination">{$page}</div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>
