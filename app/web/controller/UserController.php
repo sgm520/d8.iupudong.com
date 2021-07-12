@@ -3,6 +3,7 @@
 namespace app\web\controller;
 
 use app\web\model\TixianModel;
+use app\web\model\Token;
 use app\web\model\UserModel;
 use cmf\controller\HomeBaseController;
 use think\facade\Db;
@@ -10,16 +11,14 @@ use think\Model;
 
 class UserController extends HomeBaseController{
 
-    protected $userId,$user_name;
+    protected $userId;
     public function initialize()
     {
-        $this->userId = session("USER_ID");
-        // $this->userId = 15;
-        $this->user_name = session("USER_NAME");
-        // if (empty($this->userId)) {
-        //     echo json_encode(["code"=>"404","state"=>0,"data"=>"请登录账号！"],JSON_UNESCAPED_UNICODE);
-        //     die;
-        // }
+        $this->userId = Token::getUserIdByToken(request()->header('token', ''));
+         if (empty($this->userId)) {
+             echo json_encode(["code"=>"404","state"=>0,"data"=>"请登录账号！"],JSON_UNESCAPED_UNICODE);
+             die;
+         }
 
         parent::initialize();
     }
@@ -167,7 +166,7 @@ class UserController extends HomeBaseController{
                 "tx_time" => time(), //提现时间
                 "state" => "2", //未处理
                 "user_id" => $this->userId,
-                "user_login" => $this->user_name,
+                "user_login" =>$user->getUser()->user_login,
                 "al_pay_name" => $uList["al_pay_name"],
                 "al_pay_account" => $uList["al_pay_account"],
             ];

@@ -11,7 +11,7 @@
 namespace app\web\model;
 
 use think\Model;
-
+use app\web\model\Token;
 class UserModel extends Model
 {
     /**
@@ -150,6 +150,17 @@ class UserModel extends Model
             $os = "android";
         }
         return json_encode($os);
+    }
+
+    public static function getUserId()
+    {
+        $token = Token::getToken();
+        $user_id = Token::getUserIdByToken($token);
+        return $user_id;
+    }
+    public static function getUser()
+    {
+        return self::find(self::getUserId());
     }
 
 }

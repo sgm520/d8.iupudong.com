@@ -2,7 +2,6 @@
 
 namespace app\web\controller;
 
-use app\web\model\Token;
 use app\web\model\UserModel;
 use app\web\model\RoleUserModel;
 use cmf\controller\HomeBaseController;
@@ -69,7 +68,6 @@ class LoginController extends HomeBaseController{
                 if (!empty($token)) {
                     session('token', $token);
                 }
-                $token=Token::setToken($result["id"]);
                 UserModel::where('id', $result['id'])->update($data);
                 cookie("admin_username", $name, 3600 * 24 * 30);
                 session("__LOGIN_BY_CMF_ADMIN_PW__", null);

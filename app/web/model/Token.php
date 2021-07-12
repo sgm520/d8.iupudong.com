@@ -14,7 +14,7 @@ class Token extends Model
      * 模型名称
      * @var string
      */
-    protected $name = 'tokens';
+    protected $name = 'user_token';
     /**获取token值
      *
      * @return string
@@ -48,7 +48,7 @@ class Token extends Model
         if (empty($token)) {
             return 0;
         }
-        $token = self::where('token', $token)->first();
+        $token = self::where('token', $token)->find();
         if (empty($token)) {
             return 0;
         }
