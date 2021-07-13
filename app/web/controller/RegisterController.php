@@ -66,10 +66,10 @@ class RegisterController extends HomeBaseController{
 
 
     public function getParent($sid,$arr){
-          $order= Db('user')->where('id',$sid)->find();
-           if($order['id']){
-               array_push($arr,$order->s_id);
-               self::getParent($order->id,$arr);
+          $user= Db('user')->where('id',$sid)->find();
+           if($user['id']){
+               array_push($arr,$user['s_id']);
+               self::getParent($user['id'],$arr);
            }
             $comma_separated = implode(",", $arr);
            return $comma_separated;
