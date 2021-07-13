@@ -32,7 +32,7 @@ class FanyongTixianController extends AdminBaseController{
         if(empty($order)){
             $this->error("订单没有找到");
         }
-        if($order['state']){
+        if($order['state'] !=2){
             $this->success("改状态不能提现");
         }else{
             $u_data = UserModel::find($order['user_id']);
