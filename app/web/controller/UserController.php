@@ -33,7 +33,7 @@ class UserController extends HomeBaseController{
         $user = new UserModel();
         $u_data = $user
             ->where("id",$this->userId)
-            ->field("id,tel,last_tel,income,tx,ktx,user_nickname,avatar,vip")
+            ->field("id,tel,last_tel,income,tx,ktx,user_nickname,avatar,vip,is_real")
             ->find();
         echo json_encode(["code"=>200,"data"=>$u_data],JSON_UNESCAPED_UNICODE);die;
 
