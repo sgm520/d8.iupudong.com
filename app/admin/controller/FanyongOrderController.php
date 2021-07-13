@@ -65,19 +65,43 @@ class FanyongOrderController extends AdminBaseController{
             $description = "直推客户奖励";
             $this->balance($user['id'],$order['tel'],$order['name'],$order['xlines'],$balance,$description,$remark);
         }
-        /**
-         * 直推反百分之五
-         */
-        if($user['s_id']){
-            $balance = $order['fmoney']*0.05;
-            $description = "下级直推奖励";
-            $this->balance($user['s_id'],$order['tel'],$order['name'],$order['xlines'],$balance,$description,$remark);
+
+        if($user){
+            $return_rate1=0.05;
+            $return_rate2=0.03;
+            $return_rate3=0.01;
+            $s_id=explode(",", $user['s_path']);
+            $rate=0;
+            foreach ($s_id as $k=>$v){
+                if($k ==1){
+                    $rate=$return_rate1;
+                }else if($k ==2){
+                    $rate=$return_rate2;
+                }
+                else if($k ==3){
+                    $rate=$return_rate3;
+                }
+                if($s_id !=1){
+                    $balance = $order['fmoney']*$rate;
+                    $description =$k."级直推奖励";
+                    $this->balance($s_id,$order['tel'],$order['name'],$order['xlines'],$balance,$description,$remark);
+                }
+
+            }
         }
-        if($user['indirect']){
-            $balance = $order['fmoney']*0.02;
-            $description = "下下级直推奖励";
-            $this->balance($user['indirect'],$order['tel'],$order['name'],$order['xlines'],$balance,$description,$remark);
-        }
+//        /**
+//         * 直推反百分之五
+//         */
+//        if($user['s_id']){
+//            $balance = $order['fmoney']*0.05;
+//            $description = "下级直推奖励";
+
+//        }
+//        if($user['indirect']){
+
+
+//            $this->balance($user['indirect'],$order['tel'],$order['name'],$order['xlines'],$balance,$description,$remark);
+//        }
 
     }
 
