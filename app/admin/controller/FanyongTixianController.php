@@ -39,7 +39,7 @@ class FanyongTixianController extends AdminBaseController{
             if(empty($u_data)){
                 $this->success("未找到该用户");
             }else{
-                $u_data->ktx=$u_data->ktx-$order['money'];
+                $u_data->ktx=$u_data->ktx+$order['money'];
                 $u_data->save();
                 Db("tixian")->where("id",$id)->update(["state"=>0]);
             }
