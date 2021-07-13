@@ -171,7 +171,8 @@ class UserController extends HomeBaseController{
                 "al_pay_account" => $uList["al_pay_account"],
             ];
             $txModel->save($ins);
-
+            $uList->ktx=$user->ktx-$money;
+            $uList->save();
             // echo json_encode(["code"=>200,"data"=>$u_data,"msg"=>"提现成功"],JSON_UNESCAPED_UNICODE);
         }else{
             echo json_encode(["code"=>22,"data"=>$u_data,"msg"=>"可提现金额不足"],JSON_UNESCAPED_UNICODE);die;
