@@ -109,8 +109,13 @@ class UserController extends HomeBaseController{
                 echo json_encode(['code'=>0,"data"=>"每日只能提现一次",'msg'=>'每日只能提现一次'],JSON_UNESCAPED_UNICODE);die;
             }
             $u_data = UserModel::find($this->userId);
-            $this->tx_validate($param['money'],$u_data,$u_data);
-            if(!empty($rq_us)){
+            if($u_data['ktx']<$param['money']){
+                echo json_encode(["code"=>0,"data"=>$u_data,"msg"=>"可提现金额不足"],JSON_UNESCAPED_UNICODE);die;
+            }
+            $rq_us= $this->tx_validate($param['money'],$u_data,$u_data);
+            if($rq_us){
+                $u_data->ktx=$u_data->ktx-$param['money'];
+                $u_data->save();
                 echo json_encode(['code'=>200,"data"=>"已提交,等待审核"],JSON_UNESCAPED_UNICODE);die;
             }
             echo json_encode(['code'=>0,"data"=>"提交失败"],JSON_UNESCAPED_UNICODE);die;
@@ -138,25 +143,17 @@ class UserController extends HomeBaseController{
             ->where("id",$this->userId)
             ->field("id_card,tx,ktx,income,al_pay_name,al_pay_account")
             ->find();
-
-        if($uList['ktx']>=$money & $money != 0){
-            $ins = [
-                "money"=>$money, //提现金额
-                "tx_time" => time(), //提现时间
-                "state" => "2", //未处理
-                "user_id" => $this->userId,
-                "user_login" =>$user->getUser()->user_login,
-                "al_pay_name" => $uList["al_pay_name"],
-                "al_pay_account" => $uList["al_pay_account"],
-            ];
-            $txModel->save($ins);
-            $uList->ktx=$user->ktx-$money;
-            $uList->save();
-            // echo json_encode(["code"=>200,"data"=>$u_data,"msg"=>"提现成功"],JSON_UNESCAPED_UNICODE);
-        }else{
-            echo json_encode(["code"=>22,"data"=>$u_data,"msg"=>"可提现金额不足"],JSON_UNESCAPED_UNICODE);die;
-        }
-
+        $ins = [
+            "money"=>$money, //提现金额
+            "tx_time" => time(), //提现时间
+            "state" => "2", //未处理
+            "user_id" => $this->userId,
+            "user_login" =>$user->getUser()->user_login,
+            "al_pay_name" => $uList["al_pay_name"],
+            "al_pay_account" => $uList["al_pay_account"],
+        ];
+        $txModel->save($ins);
+        return $uList->save();
     }
 
 
@@ -247,10 +244,10 @@ class UserController extends HomeBaseController{
     public function real_name(){
         $param = $this->request->param(["real_name","id_card"]);
         if(empty($param['real_name'])){
-            echo json_encode(['code'=>0,"data"=>"真实姓名不能为空"],JSON_UNESCAPED_UNICODE);die;
+            echo json_encode(['code'=>0,"data"=>"真实姓名不能为空",'msg'=>'真实姓名不能为空'],JSON_UNESCAPED_UNICODE);die;
         }
         if(empty($param['id_card'])){
-            echo json_encode(['code'=>0,"data"=>"身份证号码不能为空"],JSON_UNESCAPED_UNICODE);die;
+            echo json_encode(['code'=>0,"data"=>"身份证号码不能为空",'msg'=>'身份证号码不能为空'],JSON_UNESCAPED_UNICODE);die;
         }
         $user = new UserModel();
 
@@ -259,14 +256,14 @@ class UserController extends HomeBaseController{
             ->find();
 
         if($u_data['is_real'] ==1){
-            echo json_encode(["code"=>0,"data"=>'','mag'=>'你已实名 无需重复实名认证'],JSON_UNESCAPED_UNICODE);die;
+            echo json_encode(["code"=>0,"data"=>'','msg'=>'你已实名 无需重复实名认证'],JSON_UNESCAPED_UNICODE);die;
         }
 
         $u_data->real_name=$param['real_name'];
         $u_data->id_card=$param['id_card'];
         $u_data->is_real=1;
         $u_data->save();
-        echo json_encode(["code"=>200,"data"=>'','mag'=>'实名认证通过'],JSON_UNESCAPED_UNICODE);die;
+        echo json_encode(["code"=>200,"data"=>'','msg'=>'实名认证通过'],JSON_UNESCAPED_UNICODE);die;
     }
 
 
@@ -284,14 +281,14 @@ class UserController extends HomeBaseController{
             ->find();
 
         if($u_data['is_band'] ==1){
-            echo json_encode(["code"=>0,"data"=>'','mag'=>'你已绑定提现方式 无需重复'],JSON_UNESCAPED_UNICODE);die;
+            echo json_encode(["code"=>0,"data"=>'','msg'=>'你已绑定提现方式 无需重复'],JSON_UNESCAPED_UNICODE);die;
         }
 
         $u_data->al_pay_name=$param['al_pay_name'];
         $u_data->al_pay_account=$param['al_pay_account'];
         $u_data->is_band=1;
         $u_data->save();
-        echo json_encode(["code"=>200,"data"=>'','mag'=>'实名认证通过'],JSON_UNESCAPED_UNICODE);die;
+        echo json_encode(["code"=>200,"data"=>'','msg'=>'实名认证通过'],JSON_UNESCAPED_UNICODE);die;
     }
 
 
