@@ -270,7 +270,7 @@ class UserController extends HomeBaseController{
         if(empty($param['real_name'])){
             echo json_encode(['code'=>0,"data"=>"真实姓名不能为空"],JSON_UNESCAPED_UNICODE);die;
         }
-        if(empty($param['real_name'])){
+        if(empty($param['id_card'])){
             echo json_encode(['code'=>0,"data"=>"身份证号码不能为空"],JSON_UNESCAPED_UNICODE);die;
         }
         $user = new UserModel();
