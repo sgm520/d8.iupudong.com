@@ -100,6 +100,13 @@ class UserController extends HomeBaseController{
             if(empty($param['money'])){
                 echo json_encode(['code'=>0,"data"=>[],'msg'=>'提现金额不能为空'],JSON_UNESCAPED_UNICODE);die;
             }
+
+            if($param['money']<10){
+                echo json_encode(['code'=>0,"data"=>[],'msg'=>'提现金额不能小于10'],JSON_UNESCAPED_UNICODE);die;
+            }
+            if($param['money']>1000){
+                echo json_encode(['code'=>0,"data"=>[],'msg'=>'提现金额不能大于1000'],JSON_UNESCAPED_UNICODE);die;
+            }
             $txModel = new TixianModel();
             $beginToday=mktime(0,0,0,date('m'),date('d'),date('Y'));
             $endToday=mktime(0,0,0,date('m'),date('d')+1,date('Y'))-1;
