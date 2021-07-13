@@ -33,8 +33,12 @@ class RegisterController extends HomeBaseController{
                 echo json_encode(["code"=>37,"data"=>"","msg"=>"账号存在"],JSON_UNESCAPED_UNICODE);die;
             }
 
+            $ud['s_id'] = 1;
+            $ud['s_path'] = 1;
             if (!empty($s_id) && $s_id = $su['id']){
                 $ud['s_id'] = $s_id;
+                $arr=[$s_id];
+                $ud['s_path'] = self::getParent($s_id,$arr);
                 $indirect_id = Db("user")->where("id",$su['s_id'])->find();
                 if(!empty($indirect_id['s_id'])){
                     $ud['indirect'] = $su['indirect'];
@@ -58,6 +62,17 @@ class RegisterController extends HomeBaseController{
         }else{
             echo json_encode(["code"=>22,"data"=>"提交方式错误"],JSON_UNESCAPED_UNICODE);die;
         }
+    }
+
+
+    public function getParent($sid,$arr){
+          $order= Db('user')->where('id',$sid)->find();
+           if($order['id']){
+               array_push($arr,$order->s_id);
+               self::getParent($order->id,$arr);
+           }
+            $comma_separated = implode(",", $arr);
+           return $comma_separated;
     }
 
     /**
