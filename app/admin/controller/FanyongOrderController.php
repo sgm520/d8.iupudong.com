@@ -55,7 +55,7 @@ class FanyongOrderController extends AdminBaseController{
     public function fanyong($id){
         $userModel = new UserModel();
         $order = Db("fanyong_order")->where("id",$id)->field("pid,name,p_id,tel,xlines,p_title,fmoney")->find();
-        $user = $userModel->where("id",$order['pid'])->field("id,income,indirect,s_id")->find();
+        $user = $userModel->where("id",$order['pid'])->field("id,income,indirect,s_id,s_path")->find();
         $remark = $order['p_title'];
         /**
          * 申请用户
@@ -70,21 +70,25 @@ class FanyongOrderController extends AdminBaseController{
             $return_rate1=0.05;
             $return_rate2=0.03;
             $return_rate3=0.01;
+          
             $s_id=explode(",", $user['s_path']);
+            
+         
             $rate=0;
             foreach ($s_id as $k=>$v){
-                if($k ==1){
+                if($k ==0){
                     $rate=$return_rate1;
-                }else if($k ==2){
+                }else if($k ==1){
                     $rate=$return_rate2;
                 }
-                else if($k ==3){
+                else if($k ==2){
                     $rate=$return_rate3;
                 }
-                if($s_id !=1){
+                if($v !=1){
+                    $k=$k+1;
                     $balance = $order['fmoney']*$rate;
                     $description =$k."级直推奖励";
-                    $this->balance($s_id,$order['tel'],$order['name'],$order['xlines'],$balance,$description,$remark);
+                    $this->balance($v,$order['tel'],$order['name'],$order['xlines'],$balance,$description,$remark);
                 }
 
             }
