@@ -109,7 +109,7 @@ class UserController extends HomeBaseController{
             }
             $u_data = UserModel::find($this->userId);
             if($u_data['ktx']<$param['money']){
-                echo json_encode(["code"=>0,"data"=>$u_data,"msg"=>"可提现金额不足"],JSON_UNESCAPED_UNICODE);die;
+                echo json_encode(["code"=>0,"data"=>'',"msg"=>"可提现金额不足"],JSON_UNESCAPED_UNICODE);die;
             }
             $rq_us= $this->tx_validate($param['money'],$u_data,$u_data);
             if($rq_us){
