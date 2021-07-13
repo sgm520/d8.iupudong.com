@@ -103,8 +103,7 @@ class UserController extends HomeBaseController{
             $txModel = new TixianModel();
             $beginToday=mktime(0,0,0,date('m'),date('d'),date('Y'));
             $endToday=mktime(0,0,0,date('m'),date('d')+1,date('Y'))-1;
-            $map['tx_time'] = array('between', array($beginToday,$endToday));
-            $count_tx=$txModel->where('user_id',$this->userId)->where($map)->count();
+            $count_tx=$txModel->where('user_id',$this->userId)->where('tx_time','between', array($beginToday,$endToday))->count();
             if($count_tx){
                 echo json_encode(['code'=>0,"data"=>"每日只能提现一次",'msg'=>'每日只能提现一次'],JSON_UNESCAPED_UNICODE);die;
             }
