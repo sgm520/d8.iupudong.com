@@ -74,38 +74,21 @@ class UserController extends HomeBaseController{
     public function tx123(){
         $param = $this->request->param();
         $user = new UserModel();
-
         $u_data = $user
             ->where("id",$this->userId)
             ->field("id_card,al_pay_name,al_pay_account")
             ->find();
-        if(!empty($param['al_pay_name']) && !empty($param['al_pay_account'])){
-            $us = UserModel::find($this->userId);
-
-            $rq_us = $us->allowfield(['al_pay_account','al_pay_name','id_card'])->save($param);
-            if($rq_us){
-                echo json_encode(['code'=>200,"data"=>"绑定成功"],JSON_UNESCAPED_UNICODE);
-            }else{
-                echo json_encode(['code'=>41,"data"=>"绑定失败"],JSON_UNESCAPED_UNICODE);
-            }
-            // Db("user")->where("id",$this->userId)->allowfield(['al_pay_account','al_pay_name','id_card'])->update($param);
-
+        if(empty($param['money'])){
+            echo json_encode(['code'=>40,"data"=>$u_data,"msg"=>"未填写提交金额"],JSON_UNESCAPED_UNICODE);
             die;
-        }else{
-            if(empty($param['money'])){
-                echo json_encode(['code'=>40,"data"=>$u_data,"msg"=>"未填写提交金额"],JSON_UNESCAPED_UNICODE);
-                die;
-            }
         }
-        if(is_null($u_data['al_pay_name']) || is_null($u_data['al_pay_account'])){
-            echo json_encode(['code'=>21,"data"=>"请绑定支付宝"],JSON_UNESCAPED_UNICODE);
+
+
+        $money = $this->request->param("money");
+        if(!empty($money)){
+            $this->tx_validate($money,$u_data,$u_data);
         }else{
-            $money = $this->request->param("money");
-            if(!empty($money)){
-                $this->tx_validate($money,$u_data,$u_data);
-            }else{
-                echo json_encode(['code'=>200,"data"=>$u_data],JSON_UNESCAPED_UNICODE);
-            }
+            echo json_encode(['code'=>200,"data"=>$u_data],JSON_UNESCAPED_UNICODE);
         }
 
     }
@@ -114,23 +97,19 @@ class UserController extends HomeBaseController{
 
         if($this->request->isPost()){
             $param = $this->request->param();
-            if(empty($param['al_pay_name'])){
-                echo json_encode(['code'=>0,"data"=>"支付宝姓名不能为空"],JSON_UNESCAPED_UNICODE);die;
-            }
-            if(empty($param['al_pay_account'])){
-                echo json_encode(['code'=>0,"data"=>"支付宝账号不能为空"],JSON_UNESCAPED_UNICODE);die;
-            }
-            if(empty($param['id_card'])){
-                echo json_encode(['code'=>0,"data"=>"身份证号不能为空"],JSON_UNESCAPED_UNICODE);die;
-            }
             if(empty($param['money'])){
                 echo json_encode(['code'=>0,"data"=>"提现金额不能为空"],JSON_UNESCAPED_UNICODE);die;
             }
-
+            $txModel = new TixianModel();
+            $beginToday=mktime(0,0,0,date('m'),date('d'),date('Y'));
+            $endToday=mktime(0,0,0,date('m'),date('d')+1,date('Y'))-1;
+            $map['tx_time'] = array('between', array($beginToday,$endToday));
+            $count_tx=$txModel->where('user_id',$this->userId)->where($map)->count();
+            if($count_tx){
+                echo json_encode(['code'=>0,"data"=>"每日只能提现一次",'msg'=>'每日只能提现一次'],JSON_UNESCAPED_UNICODE);die;
+            }
             $u_data = UserModel::find($this->userId);
             $this->tx_validate($param['money'],$u_data,$u_data);
-            $rq_us = $u_data->allowfield(['al_pay_account','al_pay_name','id_card'])->save($param);
-
             if(!empty($rq_us)){
                 echo json_encode(['code'=>200,"data"=>"已提交,等待审核"],JSON_UNESCAPED_UNICODE);die;
             }
