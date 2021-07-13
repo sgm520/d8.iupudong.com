@@ -266,7 +266,7 @@ class UserController extends HomeBaseController{
 
     //实名认证
     public function real_name(){
-        $data = $this->request->param(["real_name","id_card"]);
+        $param = $this->request->post(["real_name","id_card"]);
         if(empty($param['real_name'])){
             echo json_encode(['code'=>0,"data"=>"真实姓名不能为空"],JSON_UNESCAPED_UNICODE);die;
         }
@@ -279,8 +279,8 @@ class UserController extends HomeBaseController{
             ->where("id",$this->userId)
             ->find();
 
-        $u_data->real_name=$data['real_name'];
-        $u_data->id_card=$data['id_card'];
+        $u_data->real_name=$param['real_name'];
+        $u_data->id_card=$param['id_card'];
         $u_data->is_real=1;
         $u_data->save();
         echo json_encode(["code"=>200,"data"=>'','mag'=>'实名认证通过'],JSON_UNESCAPED_UNICODE);die;
