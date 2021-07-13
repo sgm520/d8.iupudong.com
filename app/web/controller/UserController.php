@@ -98,24 +98,24 @@ class UserController extends HomeBaseController{
         if($this->request->isPost()){
             $param = $this->request->param();
             if(empty($param['money'])){
-                echo json_encode(['code'=>0,"data"=>"提现金额不能为空"],JSON_UNESCAPED_UNICODE);die;
+                echo json_encode(['code'=>0,"data"=>[],'msg'=>'提现金额不能为空'],JSON_UNESCAPED_UNICODE);die;
             }
             $txModel = new TixianModel();
             $beginToday=mktime(0,0,0,date('m'),date('d'),date('Y'));
             $endToday=mktime(0,0,0,date('m'),date('d')+1,date('Y'))-1;
             $count_tx=$txModel->where('user_id',$this->userId)->where('tx_time','between', array($beginToday,$endToday))->count();
             if($count_tx){
-                echo json_encode(['code'=>0,"data"=>"每日只能提现一次",'msg'=>'每日只能提现一次'],JSON_UNESCAPED_UNICODE);die;
+                echo json_encode(['code'=>0,"data"=>[],'msg'=>'每日只能提现一次'],JSON_UNESCAPED_UNICODE);die;
             }
             $u_data = UserModel::find($this->userId);
             if($u_data['ktx']<$param['money']){
-                echo json_encode(["code"=>0,"data"=>'',"msg"=>"可提现金额不足"],JSON_UNESCAPED_UNICODE);die;
+                echo json_encode(["code"=>0,"data"=>[],"msg"=>"可提现金额不足"],JSON_UNESCAPED_UNICODE);die;
             }
             $rq_us= $this->tx_validate($param['money'],$u_data,$u_data);
             if($rq_us){
                 $u_data->ktx=$u_data->ktx-$param['money'];
                 $u_data->save();
-                echo json_encode(['code'=>200,"data"=>"已提交,等待审核"],JSON_UNESCAPED_UNICODE);die;
+                echo json_encode(['code'=>200,"data"=>[],'msg'=>'已提交,等待审核'],JSON_UNESCAPED_UNICODE);die;
             }
             echo json_encode(['code'=>0,"data"=>"提交失败"],JSON_UNESCAPED_UNICODE);die;
         }else{
@@ -272,7 +272,7 @@ class UserController extends HomeBaseController{
             echo json_encode(['code'=>0,"data"=>"",'msg'=>'支付宝名称'],JSON_UNESCAPED_UNICODE);die;
         }
         if(empty($param['al_pay_account'])){
-            echo json_encode(['code'=>0,"data"=>"支付宝账号",'msg'=>'支付宝账号'],JSON_UNESCAPED_UNICODE);die;
+            echo json_encode(['code'=>0,"data"=>[],'msg'=>'支付宝账号'],JSON_UNESCAPED_UNICODE);die;
         }
         $user = new UserModel();
         $u_data = $user
@@ -280,14 +280,14 @@ class UserController extends HomeBaseController{
             ->find();
 
         if($u_data['is_band'] ==1){
-            echo json_encode(["code"=>0,"data"=>'','msg'=>'你已绑定提现方式 无需重复'],JSON_UNESCAPED_UNICODE);die;
+            echo json_encode(["code"=>0,"data"=>[],'msg'=>'你已绑定提现方式 无需重复'],JSON_UNESCAPED_UNICODE);die;
         }
 
         $u_data->al_pay_name=$param['al_pay_name'];
         $u_data->al_pay_account=$param['al_pay_account'];
         $u_data->is_band=1;
         $u_data->save();
-        echo json_encode(["code"=>200,"data"=>'','msg'=>'实名认证通过'],JSON_UNESCAPED_UNICODE);die;
+        echo json_encode(["code"=>200,"data"=>[],'msg'=>'实名认证通过'],JSON_UNESCAPED_UNICODE);die;
     }
 
 
