@@ -33,7 +33,7 @@ class UserController extends HomeBaseController{
         $user = new UserModel();
         $u_data = $user
             ->where("id",$this->userId)
-            ->field("id,tel,last_tel,income,tx,ktx,user_nickname,avatar,vip,is_real")
+            ->field("id,tel,last_tel,income,tx,ktx,user_nickname,avatar,vip,is_real,al_pay_name,al_pay_account,is_band")
             ->find();
         echo json_encode(["code"=>200,"data"=>$u_data],JSON_UNESCAPED_UNICODE);die;
 
@@ -286,6 +286,31 @@ class UserController extends HomeBaseController{
         $u_data->real_name=$param['real_name'];
         $u_data->id_card=$param['id_card'];
         $u_data->is_real=1;
+        $u_data->save();
+        echo json_encode(["code"=>200,"data"=>'','mag'=>'实名认证通过'],JSON_UNESCAPED_UNICODE);die;
+    }
+
+
+    public function band(){
+        $param = $this->request->param(["al_pay_name","al_pay_account"]);
+        if(empty($param['al_pay_name'])){
+            echo json_encode(['code'=>0,"data"=>"",'msg'=>'支付宝名称'],JSON_UNESCAPED_UNICODE);die;
+        }
+        if(empty($param['al_pay_account'])){
+            echo json_encode(['code'=>0,"data"=>"支付宝账号",'msg'=>'支付宝账号'],JSON_UNESCAPED_UNICODE);die;
+        }
+        $user = new UserModel();
+        $u_data = $user
+            ->where("id",$this->userId)
+            ->find();
+
+        if($u_data['is_band'] ==1){
+            echo json_encode(["code"=>0,"data"=>'','mag'=>'你已绑定提现方式 无需重复'],JSON_UNESCAPED_UNICODE);die;
+        }
+
+        $u_data->al_pay_name=$param['al_pay_name'];
+        $u_data->al_pay_account=$param['al_pay_account'];
+        $u_data->is_band=1;
         $u_data->save();
         echo json_encode(["code"=>200,"data"=>'','mag'=>'实名认证通过'],JSON_UNESCAPED_UNICODE);die;
     }
