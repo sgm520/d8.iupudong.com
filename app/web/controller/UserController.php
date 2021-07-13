@@ -279,6 +279,10 @@ class UserController extends HomeBaseController{
             ->where("id",$this->userId)
             ->find();
 
+        if($u_data['is_real'] ==1){
+            echo json_encode(["code"=>0,"data"=>'','mag'=>'你已实名 无需重复实名认证'],JSON_UNESCAPED_UNICODE);die;
+        }
+
         $u_data->real_name=$param['real_name'];
         $u_data->id_card=$param['id_card'];
         $u_data->is_real=1;
