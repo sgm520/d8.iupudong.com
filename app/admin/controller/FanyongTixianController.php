@@ -29,6 +29,7 @@ class FanyongTixianController extends AdminBaseController{
         Db("tixian")->where("id",$id)->update(["state"=>1]);
         $u_data = UserModel::find($order['user_id']);
         $u_data->tx=$u_data->tx+$order['money'];
+        $u_data->save();
         $this->success("提现通过");
     }
     public function refused(){
