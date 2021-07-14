@@ -254,8 +254,10 @@ class UserController extends HomeBaseController{
             $data1= $userModel->where('s_id',$v['id'])->select()->toArray();//下下级
             foreach($data as $k=>$v){
                 $data1[$k]['create_time_text'] = date('Y-m-d H:i:s',$v['create_time']);
+
+                array_push($arr,$data1[$k]);
             }
-            array_push($arr,$data1);
+
         }
         return $arr;
     }
