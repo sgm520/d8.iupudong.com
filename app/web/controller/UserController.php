@@ -232,18 +232,32 @@ class UserController extends HomeBaseController{
      */
     public function promote($state){
         $userModel = new UserModel();
-        $userId = session("USER_ID");
         // true 直推 false 间推
         if ($state){
-            $where = ["s_id"=>$userId];
+            $user = $userModel->where('s_id',$this->userId)->select();
+            foreach($user as $k=>$v){
+                $user[$k]['create_time_text'] = date('Y-m-d H:i:s',$v['create_time']);
+            }
         }else{
-            $where = ["indirect"=>$userId];
+            $user=self::Indirect_friends();
         }
-        $user = $userModel->where($where)->select();
-        foreach($user as $k=>$v){
-            $user[$k]['create_time_text'] = date('Y-m-d H:i:s',$v['create_time']);
-        }
+
         echo json_encode(["code"=>200,"data"=>$user],JSON_UNESCAPED_UNICODE);die;
+    }
+
+    public function Indirect_friends(){
+
+        $userModel = new UserModel();
+        $data=$userModel->where('s_id',$this->userId)->select();//所以下级
+        $arr=[];
+        foreach ($data as $k=>$v){
+            $data1= $userModel->where('s_id',$v['id'])->select()->toArray();//下下级
+            foreach($data as $k=>$v){
+                $data1[$k]['create_time_text'] = date('Y-m-d H:i:s',$v['create_time']);
+            }
+            array_push($arr,$data1);
+        }
+        return $arr;
     }
 
     //实名认证
