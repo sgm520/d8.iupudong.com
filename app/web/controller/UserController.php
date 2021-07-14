@@ -196,7 +196,7 @@ class UserController extends HomeBaseController{
      */
     public function income_details(){
         $userId = session("USER_ID");
-        $detail = Db::name("user_balance_log")->where("user_id",$userId)->select()->toArray();
+        $detail = Db::name("user_balance_log")->where("user_id",$userId)->order('id','desc')->select()->toArray();
         foreach($detail as $k=>$v){
             $detail[$k]['create_time_text'] = date('Y-m-d H:i:s',$v['create_time']);
         }
