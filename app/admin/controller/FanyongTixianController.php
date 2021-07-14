@@ -22,7 +22,13 @@ class FanyongTixianController extends AdminBaseController{
 
     public function agree(){
         $id = $this->request->param("id");
+        $order=Db("tixian")->where("id",$id)->find();
+        if(empty($order)){
+            $this->error("订单没有找到");
+        }
         Db("tixian")->where("id",$id)->update(["state"=>1]);
+        git = UserModel::find($order['user_id']);
+        $u_data->tx=$u_data->tx+$order['money'];
         $this->success("提现通过");
     }
     public function refused(){
@@ -40,6 +46,7 @@ class FanyongTixianController extends AdminBaseController{
                 $this->success("未找到该用户");
             }else{
                 $u_data->ktx=$u_data->ktx+$order['money'];
+
                 $u_data->save();
                 Db("tixian")->where("id",$id)->update(["state"=>0]);
             }
