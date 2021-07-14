@@ -76,7 +76,10 @@ class FanyongOrderController extends AdminBaseController{
          
             $rate=0;
             foreach ($s_id as $k=>$v){
-                if($k ==0){
+                if($k>=3){
+                    return 1;
+                }
+                else if($k ==0){
                     $rate=$return_rate1;
                 }else if($k ==1){
                     $rate=$return_rate2;

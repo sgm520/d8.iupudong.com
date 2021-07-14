@@ -27,7 +27,7 @@ class FanyongTixianController extends AdminBaseController{
             $this->error("订单没有找到");
         }
         Db("tixian")->where("id",$id)->update(["state"=>1]);
-        git = UserModel::find($order['user_id']);
+        $u_data = UserModel::find($order['user_id']);
         $u_data->tx=$u_data->tx+$order['money'];
         $this->success("提现通过");
     }
