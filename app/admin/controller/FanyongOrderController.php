@@ -109,7 +109,7 @@ class FanyongOrderController extends AdminBaseController{
     public function balance($user_id,$tel,$name,$change,$balance,$description,$remark){
         $user = UserModel::find($user_id);
         $userModel = new UserModel();
-        $user_result = $userModel->where("id",$user_id)->save(["income"=>$user['income']+$balance,"ktx"=>$user["ktx"]+$balance]);
+        $userModel->where("id",$user_id)->save(["income"=>$user['income']+$change,"ktx"=>$user["ktx"]+$change]);
         $user_balance_log = [
             "user_id" =>   $user_id,
             "create_time" =>   time(),
