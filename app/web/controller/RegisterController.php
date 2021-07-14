@@ -37,8 +37,8 @@ class RegisterController extends HomeBaseController{
             $ud['s_path'] = 1;
             if (!empty($s_id) && $s_id = $su['id']){
                 $ud['s_id'] = $s_id;
-                $arr=[$s_id];
-                $ud['s_path'] = self::getParent($s_id,$arr);
+                $ud['s_path'] = $s_id.','.$su['s_path'];
+                // halt($ud);
                 $indirect_id = Db("user")->where("id",$su['s_id'])->find();
                 if(!empty($indirect_id['s_id'])){
                     $ud['indirect'] = $su['indirect'];
@@ -76,8 +76,10 @@ class RegisterController extends HomeBaseController{
             }
 
         }
+      
         array_push($arr,1);
         $arr = implode(",", $arr);
+        
         return $arr;
     }
 

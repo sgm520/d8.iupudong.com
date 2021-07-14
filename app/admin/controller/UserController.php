@@ -46,7 +46,7 @@ class UserController extends AdminBaseController
      * )
      * @throws \think\exception\DbException
      */
-    public function index()
+    public function indexs()
     {
         $content = hook_one('admin_user_index_view');
 

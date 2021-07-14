@@ -24,7 +24,7 @@
                 <th>{:lang('NICENAME')}</th>
                 <th>{:lang('AVATAR')}</th>
                 <th>上级</th>
-                <th>上上级</th>
+                <th>关系图</th>
                 <th>总收入</th>
                 <th>可提现</th>
                 <th>{:lang('REGISTRATION_TIME')}</th>
@@ -44,7 +44,7 @@
                     <td>{$vo['user_nickname']?$vo['user_nickname']:lang('NOT_FILLED')}</td>
                     <td><img width="25" height="25" src="{:url('user/public/avatar',array('id'=>$vo['id']))}"/></td>
                     <td>{$vo.s_id}</td>
-                    <td>{$vo.indirect}</td>
+                    <td>{$vo.s_path}</td>
                     <td>{$vo.income}元</td>
                     <td>{$vo.ktx}元</td>
                     <td>{:date('Y-m-d H:i:s',$vo['create_time'])}</td>
