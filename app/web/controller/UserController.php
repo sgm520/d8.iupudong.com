@@ -233,7 +233,7 @@ class UserController extends HomeBaseController{
     public function promote($state){
         $userModel = new UserModel();
         // true 直推 false 间推
-        if ($state){
+        if ($state ==1){
             $user = $userModel->where('s_id',$this->userId)->select();
             foreach($user as $k=>$v){
                 $user[$k]['create_time_text'] = date('Y-m-d H:i:s',$v['create_time']);
