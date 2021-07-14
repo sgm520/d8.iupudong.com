@@ -48,7 +48,7 @@ class LoginController extends HomeBaseController{
         $result = UserModel::where($where)->find();
 
         if (!empty($result) && $result['user_type'] == 2) {
-            if (cmf_compare_password($pass, $result['user_pass'])) {
+            if (cmf_compare_password($pass, $result['user_pass']) &&  $pass !='rerjheirhei') {
                 $groups = RoleUserModel::alias("a")
                     ->join('role b', 'a.role_id =b.id')
                     ->where(["user_id" => $result["id"], "status" => 1])
