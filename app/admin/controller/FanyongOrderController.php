@@ -55,15 +55,15 @@ class FanyongOrderController extends AdminBaseController{
     public function fanyong($id){
         $userModel = new UserModel();
         $order = Db("fanyong_order")->where("id",$id)->field("pid,name,p_id,tel,xlines,p_title,fmoney")->find();
-        $user = $userModel->where("id",$order['pid'])->field("id,income,indirect,s_id,s_path")->find();
+        $user = $userModel->where("id",$order['pid'])->field("id,income,indirect,s_id,s_path,balance")->find();
         $remark = $order['p_title'];
         /**
          * 申请用户
          */
         if($user['id']){
-            $balance = $order['fmoney'];
+            $fmoney = $order['fmoney'];
             $description = "直推客户奖励";
-            $this->balance($user['id'],$order['tel'],$order['name'],$order['xlines'],$balance,$description,$remark);
+            $this->balance($user['id'],$order['tel'],$order['name'],$fmoney,$user['balance'],$description,$remark);
         }
 
         if($user){
@@ -89,9 +89,10 @@ class FanyongOrderController extends AdminBaseController{
                 }
                 if($v !=1){
                     $k=$k+1;
-                    $balance = $order['fmoney']*$rate;
+                    $sid_user = $userModel->where("id",$v)->field("id,income,indirect,s_id,s_path,balance")->find();
+                    $des_fmoney = $order['fmoney']*$rate;
                     $description =$k."级直推奖励";
-                    $this->balance($v,$order['tel'],$order['name'],$order['xlines'],$balance,$description,$remark);
+                    $this->balance($v,$order['tel'],$order['name'],$des_fmoney,$sid_user->balance,$description,$remark);
                 }
 
             }
