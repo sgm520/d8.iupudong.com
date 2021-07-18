@@ -41,7 +41,7 @@ class UserController extends HomeBaseController{
 
     public function tx_list(){
         $txModel = new TixianModel();
-        $list = $txModel->where("user_login",session("USER_NAME"))->select();
+        $list = $txModel->where("user_login",$this->userId)->select();
         foreach($list as $k=>$v){
             $list[$k]['tx_time_text'] = date('Y-m-d H:i:s',$v['tx_time']);
         }
