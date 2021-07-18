@@ -102,7 +102,7 @@ class RegisterController extends HomeBaseController{
         $result = Db("user_balance_log")->insert($ia);
 
         if ($result){
-            $user->save(['income'=>(int)($user->income + 5)]);
+            $user->save(['income'=>(int)($user->income + 5),'ktx'=>(int)($user->ktx + 5)]);
             return true;
         }
         return false;
