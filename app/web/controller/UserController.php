@@ -12,13 +12,23 @@ use think\Model;
 class UserController extends HomeBaseController{
 
     protected $userId;
+
     public function initialize()
     {
-        $this->userId = Token::getUserIdByToken(request()->header('token', ''));
-         if (empty($this->userId)) {
-             echo json_encode(["code"=>"404","state"=>0,"data"=>"请登录账号！"],JSON_UNESCAPED_UNICODE);
-             die;
-         }
+
+
+
+        if(in_array($this->request->url(),['/web/user/to_product'])){
+
+        }else{
+            $this->userId = Token::getUserIdByToken(request()->header('token', ''));
+            if (empty($this->userId)) {
+                echo json_encode(["code"=>"404","state"=>0,"data"=>"请登录账号！"],JSON_UNESCAPED_UNICODE);
+                die;
+            }
+        }
+
+
 
         parent::initialize();
     }
