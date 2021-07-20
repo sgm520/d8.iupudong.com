@@ -32,10 +32,9 @@ class IndexController extends HomeBaseController
 
     public function block()
     {
-        $name = $this->request->param("name",'today_hot');
+        $name = $this->request->param("name");
         if (empty($name)) {
-            echo json_encode(["code" => 0, "msg" => "name不能为空"], JSON_UNESCAPED_UNICODE);
-            die;
+            $name='today_hot';
         }
         if ($name == 'today_hot') {
             $hot_list  = ChaoshiModel::where('status', 1)->where('hot_list', 1)->order("list_order", "asc")->field('*,FROM_UNIXTIME(update_time,"%Y-%m-%d %H:%i:%s") update_time_text')->select()->toArray();//热门排行
@@ -243,8 +242,7 @@ class IndexController extends HomeBaseController
     {
         $name = $this->request->param("name",'today_hot');
         if (empty($name)) {
-            echo json_encode(["code" => 0, "msg" => "name不能为空"], JSON_UNESCAPED_UNICODE);
-            die;
+            $name='today_hot';
         }
         if ($name == 'today_hot') {
             $hot_list  = ChaoshiModel::where('status', 1)->where('hot_list', 1)->order("list_order", "asc")->field('*,FROM_UNIXTIME(update_time,"%Y-%m-%d %H:%i:%s") update_time_text')->select()->toArray();//热门排行
