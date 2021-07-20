@@ -32,7 +32,7 @@ class IndexController extends HomeBaseController
 
     public function block()
     {
-        $name = $this->request->param("name");
+        $name = $this->request->param("name",'today_hot');
         if (empty($name)) {
             echo json_encode(["code" => 0, "msg" => "name不能为空"], JSON_UNESCAPED_UNICODE);
             die;
@@ -241,7 +241,7 @@ class IndexController extends HomeBaseController
      */
     public function tags()
     {
-        $name = $this->request->param("name");
+        $name = $this->request->param("name",'today_hot');
         if (empty($name)) {
             echo json_encode(["code" => 0, "msg" => "name不能为空"], JSON_UNESCAPED_UNICODE);
             die;
