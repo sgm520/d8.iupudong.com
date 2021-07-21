@@ -361,6 +361,12 @@ class IndexController extends HomeBaseController
         if($this->request->post()){
             $UserModel = new UserModel();
             $data = $this->request->param(["pid","name","tel","p_id","p_title"]);
+
+            $fanyong=db('fanyong')->where('id',$data['p_id'])->find();
+
+            if(empty($fanyong->status)){
+                echo json_encode(["code"=>23,"data"=>"产品已下架，请联系客服。"],JSON_UNESCAPED_UNICODE);die;
+            }
             $state=db('fanyong')->where('id',$data['p_id'])->value('state');
 
             $get_data = [
