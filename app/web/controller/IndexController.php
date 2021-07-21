@@ -342,7 +342,11 @@ class IndexController extends HomeBaseController
         $id = $this->request->param("id");
         if (!empty($id)) {
             $list = Db("fanyong")->where("id", $id)->find();
-            echo json_encode(["code" => 200, "data" => $list], JSON_UNESCAPED_UNICODE);
+            if($list['status'] ==1){
+                echo json_encode(["code" => 200, "data" => $list], JSON_UNESCAPED_UNICODE);
+            }else{
+                echo json_encode(["code" => 200, "data" => [],'msg'=>'产品已下架，请联系客服。'], JSON_UNESCAPED_UNICODE);
+            }
             die;
         } else {
             echo json_encode(["code" => 200, "data" => "null", "msg" => "未查询到产品"], JSON_UNESCAPED_UNICODE);
