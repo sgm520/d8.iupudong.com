@@ -169,7 +169,7 @@ class IndexController extends HomeBaseController
         if (!empty($state)) {
             $where        = ["state" => $state, "status" => 1];
             $fanyongModel = new FanyongModel();
-            $list         = $fanyongModel->where($where)->select();
+            $list         = $fanyongModel->where($where)->order('list_order','desc')->select();
             return json_encode(["code" => 200, "data" => $list]);
         } else {
             return json_encode(["code" => 404, "data" => "未提供产品类型"], JSON_UNESCAPED_UNICODE);
