@@ -364,7 +364,7 @@ class IndexController extends HomeBaseController
 
             $fanyong=db('fanyong')->where('id',$data['p_id'])->find();
 
-            if($fanyong->status ==0){
+            if(empty($fanyong['status'])){
                 echo json_encode(["code"=>23,"data"=>"产品已下架，请联系客服。"],JSON_UNESCAPED_UNICODE);die;
             }
             $state=db('fanyong')->where('id',$data['p_id'])->value('state');
