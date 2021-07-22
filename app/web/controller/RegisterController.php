@@ -53,8 +53,8 @@ class RegisterController extends HomeBaseController{
 
             $userId = $user->insertGetId($ud);
          
-            if ($this->giving($userId,5,"会员任务奖励")){
-                echo json_encode(["code"=>200,"data"=>"注册成功,并赠送5元"],JSON_UNESCAPED_UNICODE);die;
+            if ($userId){
+                echo json_encode(["code"=>200,"data"=>"注册成功"],JSON_UNESCAPED_UNICODE);die;
             }else{
                 $user->delete($userId);
                 echo json_encode(["code"=>4,"data"=>"注册失败，请重新注册"],JSON_UNESCAPED_UNICODE);die;
