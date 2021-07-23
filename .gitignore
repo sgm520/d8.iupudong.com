@@ -12,3 +12,5 @@ Vagrantfile
 .vagrant
 *.log
 .env
+
+public/h5

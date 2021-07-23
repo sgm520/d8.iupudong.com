@@ -29,7 +29,7 @@ class SearchController extends HomeBaseController{
     public function search_fanyong(){
         $title = $this->request->param("name");
         $fanyongModel = new FanyongModel();
-        $fanyongAll = $fanyongModel->where("name","like","%$title%")->select();
+        $fanyongAll = $fanyongModel->where('status',1)->where("name","like","%$title%")->select();
         if($fanyongAll){
             return json_encode(["code"=>200,"data"=>$fanyongAll],JSON_UNESCAPED_UNICODE);
         }else{
