@@ -168,9 +168,7 @@ class IndexController extends HomeBaseController
         if(empty($article)){
             echo json_encode(["code" => 200, "data" => [],'msg'=>'没找到该文章'], JSON_UNESCAPED_UNICODE);
         }else{
-            $articleModel->save([
-                'view'  => $article['view']+1,
-            ],['id' => $article_id]);
+            db('article')->where('id',$article_id)->update(['view'=>$article['view']+1]);
             echo json_encode(["code" => 200, "data" => [],'msg'=>'成功'], JSON_UNESCAPED_UNICODE);
         }
     }
