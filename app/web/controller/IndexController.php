@@ -138,6 +138,8 @@ class IndexController extends HomeBaseController
         echo json_encode(["code" => 200, "data" => $category], JSON_UNESCAPED_UNICODE);
     }
 
+
+
     /**
      * 文章api
      * @return false|string
@@ -156,6 +158,22 @@ class IndexController extends HomeBaseController
         }
     }
 
+    public function add_view(){
+        $article_id = $this->request->param("article_id");
+
+        if(empty($article_id)){
+            return json_encode(["code" => 404, "data" => "未提供分类ID"], JSON_UNESCAPED_UNICODE);
+        }
+        $articleModel = new ArticleModel();
+        $article= $articleModel->where('id',$article_id)->find();
+        if(empty($article)){
+            echo json_encode(["code" => 200, "data" => [],'msg'=>'没找到该文章'], JSON_UNESCAPED_UNICODE);
+        }else{
+            $articleModel->save([
+                'view'  => $article['view']+1,
+            ],['id' => $article_id]);
+        }
+    }
     /**
      * 返佣产品列表  get需要获取产品类型  state
      * @return false|string
