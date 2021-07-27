@@ -160,7 +160,6 @@ class IndexController extends HomeBaseController
 
     public function add_view(){
         $article_id = $this->request->param("article_id");
-
         if(empty($article_id)){
             return json_encode(["code" => 404, "data" => "未提供分类ID"], JSON_UNESCAPED_UNICODE);
         }
