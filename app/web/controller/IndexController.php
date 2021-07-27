@@ -171,6 +171,7 @@ class IndexController extends HomeBaseController
             $articleModel->save([
                 'view'  => $article['view']+1,
             ],['id' => $article_id]);
+            echo json_encode(["code" => 200, "data" => [],'msg'=>'成功'], JSON_UNESCAPED_UNICODE);
         }
     }
     /**
