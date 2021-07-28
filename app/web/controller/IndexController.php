@@ -389,7 +389,8 @@ class IndexController extends HomeBaseController
                 "status" => 2,
                 "ment" => $UserModel->GetOs(),
                 "time" => time(),
-                "state" => $state
+                "state" => $state,
+                'user_ip'=>$this->get_ip()
             ];
             $in_data = array_merge($data,$get_data);
             $request = db("fanyong_order")->insert($in_data);
@@ -404,6 +405,24 @@ class IndexController extends HomeBaseController
 
     }
 
+    public function get_ip()
+    {
+        if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+            $cip = $_SERVER['HTTP_CLIENT_IP'];
+        }
+        else if(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+            $cip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        }
+        else if(!empty($_SERVER["REMOTE_ADDR"])){
+            $cip = $_SERVER["REMOTE_ADDR"];
+        }else{
+            $cip = '';
+        }
+        preg_match("/[\d\.]{7,15}/", $cip, $cips);
+        $cip = isset($cips[0]) ? $cips[0] : 'unknown';
+        unset($cips);
+        return $cip;
+    }
 
     public function category_product()
     {
